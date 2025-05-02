@@ -127,7 +127,7 @@ def get_topics(processed_docs, num_topics=10, num_words=7, passes=20):
     # Create dictionary and corpus
     dictionary = corpora.Dictionary(processed_docs)
     # Optional: Filter extremes (remove tokens that appear in less than 5 documents or more than 50% of documents)
-    # dictionary.filter_extremes(no_below=5, no_above=0.5)
+    dictionary.filter_extremes(no_below=5, no_above=0.5)
     corpus = [dictionary.doc2bow(text) for text in processed_docs]
 
     if not corpus:
@@ -197,9 +197,9 @@ def main():
     """Main function to perform lyric analysis and store results."""
     input_csv = "all_lyrics.csv"
     output_csv = 'lyric_analysis_results.csv'
-    num_lda_topics = 10  # Tunable: Increased number of topics
+    num_lda_topics = 30  # Tunable: Increased number of topics
     num_lda_words = 7   # Tunable: Number of words per topic
-    num_lda_passes = 25 # Tunable: Increased number of passes
+    num_lda_passes = 50 # Tunable: Increased number of passes
 
     try:
         df = pd.read_csv(input_csv)
