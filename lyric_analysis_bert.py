@@ -8,7 +8,7 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import nltk
 import re
-import logging # Added for cleaner output
+import logging
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -126,7 +126,7 @@ def get_topics(processed_docs, num_topics=10, num_words=7, passes=20):
     logging.info(f"Starting LDA topic modeling with num_topics={num_topics}, passes={passes}...")
     # Create dictionary and corpus
     dictionary = corpora.Dictionary(processed_docs)
-    # Optional: Filter extremes (remove tokens that appear in less than 5 documents or more than 50% of documents)
+    # Filter extremes (remove tokens that appear in less than 5 documents or more than 50% of documents)
     dictionary.filter_extremes(no_below=5, no_above=0.5)
     corpus = [dictionary.doc2bow(text) for text in processed_docs]
 

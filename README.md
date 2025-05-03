@@ -1,1 +1,3 @@
-# lyrics-sentiment-analysis
+# Sonic-Stories
+
+source venv/bin/activate\
