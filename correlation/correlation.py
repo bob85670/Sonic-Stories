@@ -8,6 +8,17 @@ import logging
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+def choose_sentiment_column(df):
+    """Return the sentiment column to use for correlation: numeric if it varies, else score."""
+    if df['sentiment_numeric'].nunique() == 1:
+        logging.info(
+            f"All sentiment labels are the same ('{df['sentiment'].iloc[0]}'). Using sentiment_score for correlation."
+        )
+        return 'sentiment_score'
+    else:
+        logging.info("Mixed sentiment labels. Using sentiment_numeric for correlation.")
+        return 'sentiment_numeric'
+
 def load_data(lyric_file="../lyric_analysis_results.csv", audio_file="../audio_features_results.csv"):
     """Load and merge lyric and audio analysis results."""
     try:
@@ -17,6 +28,12 @@ def load_data(lyric_file="../lyric_analysis_results.csv", audio_file="../audio_f
         # Convert sentiment to numeric values for correlation
         sentiment_map = {'POSITIVE': 1, 'NEUTRAL': 0, 'NEGATIVE': -1}
         lyric_df['sentiment_numeric'] = lyric_df['sentiment'].map(sentiment_map)
+
+        def canonical_title(series):
+            return series.str.replace(" ", "_").str.lower().str.strip()
+
+        lyric_df['title'] = canonical_title(lyric_df['title'])
+        audio_df['title'] = canonical_title(audio_df['title'])
         
         # Merge datasets
         merged_df = pd.merge(lyric_df, audio_df, left_on='title', right_on='title', how='inner')
@@ -29,16 +46,31 @@ def load_data(lyric_file="../lyric_analysis_results.csv", audio_file="../audio_f
 
 def calculate_correlations(df):
     """Calculate correlations between sentiment and audio features."""
-    audio_features = ['tempo', 'vocal_tone_quality', 'sound_brightness', 
+    sentiment_column = choose_sentiment_column(df)
+    audio_features = ['tempo', 'vocal_tone_quality', 'sound_brightness',
                      'musical_note_strength', 'sound_loudness']
     
     correlations = {}
     for feature in audio_features:
-        correlation, p_value = stats.pearsonr(df['sentiment_numeric'], df[feature])
-        correlations[feature] = {
-            'correlation': correlation,
-            'p_value': p_value
-        }
+        try:
+            correlation, p_value = stats.pearsonr(df[sentiment_column], df[feature])
+            
+            # Add sample size warning if needed
+            if len(df) < 10:
+                logging.warning(f"Small sample size ({len(df)} samples) may affect correlation reliability")
+                
+            correlations[feature] = {
+                'correlation': correlation,
+                'p_value': p_value,
+                'sample_size': len(df)
+            }
+        except Exception as e:
+            logging.error(f"Error calculating correlation for {feature}: {str(e)}")
+            correlations[feature] = {
+                'correlation': np.nan,
+                'p_value': np.nan,
+                'sample_size': len(df)
+            }
     
     # Convert to DataFrame for easier viewing
     corr_df = pd.DataFrame.from_dict(correlations, orient='index')
@@ -52,7 +84,7 @@ def plot_correlations(df, output_dir="correlation_plots"):
     os.makedirs(output_dir, exist_ok=True)
     
     # Set up the style
-    plt.style.use('seaborn')
+    plt.style.use('seaborn-v0_8')  # Updated style name
     
     # Key features to visualize
     key_features = ['tempo', 'vocal_tone_quality', 'sound_brightness', 
@@ -69,7 +101,14 @@ def plot_correlations(df, output_dir="correlation_plots"):
         plt.ylabel('Sentiment (Negative → Positive)')
         
         # Add correlation coefficient to plot
-        corr = df['sentiment_numeric'].corr(df[feature])
+        # Calculate correlation with error handling
+        try:
+            if df['sentiment_numeric'].std() == 0 or df[feature].std() == 0:
+                corr = np.nan
+            else:
+                corr = df['sentiment_numeric'].corr(df[feature])
+        except Exception:
+            corr = np.nan
         plt.text(0.05, 0.95, f'Correlation: {corr:.2f}', 
                 transform=plt.gca().transAxes, 
                 bbox=dict(facecolor='white', alpha=0.8))
@@ -120,8 +159,22 @@ def main():
     # Calculate overall correlations
     logging.info("Calculating correlations...")
     correlations = calculate_correlations(df)
-    print("\nOverall Correlations:")
-    print(correlations)
+    
+    print(f"\nCorrelation Analysis Results (Sample Size: {len(df)} songs)")
+    print("-" * 60)
+    
+    # Format and display results
+    pd.set_option('display.float_format', lambda x: '{:.3f}'.format(x) if not pd.isna(x) else 'N/A')
+    formatted_corr = correlations.copy()
+    formatted_corr['significance'] = formatted_corr.apply(
+        lambda row: '***' if row['p_value'] < 0.001 else
+                   '**' if row['p_value'] < 0.01 else
+                   '*' if row['p_value'] < 0.05 else
+                   'ns', axis=1
+    )
+    
+    print(formatted_corr[['correlation', 'p_value', 'significance']])
+    print("\nSignificance levels: *** p<0.001, ** p<0.01, * p<0.05, ns: not significant")
     
     # Create visualization plots
     logging.info("Creating visualization plots...")
