@@ -8,7 +8,7 @@ import logging
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def load_data(lyric_file="lyric_analysis_results.csv", audio_file="audio_features.csv"):
+def load_data(lyric_file="../lyric_analysis_results.csv", audio_file="../audio_features_results.csv"):
     """Load and merge lyric and audio analysis results."""
     try:
         lyric_df = pd.read_csv(lyric_file)
@@ -19,7 +19,7 @@ def load_data(lyric_file="lyric_analysis_results.csv", audio_file="audio_feature
         lyric_df['sentiment_numeric'] = lyric_df['sentiment'].map(sentiment_map)
         
         # Merge datasets
-        merged_df = pd.merge(lyric_df, audio_df, left_on='title', right_on='song_title', how='inner')
+        merged_df = pd.merge(lyric_df, audio_df, left_on='title', right_on='title', how='inner')
         logging.info(f"Loaded {len(merged_df)} songs with both lyric and audio data")
         
         return merged_df
@@ -29,9 +29,8 @@ def load_data(lyric_file="lyric_analysis_results.csv", audio_file="audio_feature
 
 def calculate_correlations(df):
     """Calculate correlations between sentiment and audio features."""
-    audio_features = ['tempo', 'spectral_centroid', 'rms_mean'] + \
-                    [f'mfcc_{i+1}' for i in range(13)] + \
-                    [f'chroma_{i+1}' for i in range(12)]
+    audio_features = ['tempo', 'vocal_tone_quality', 'sound_brightness', 
+                     'musical_note_strength', 'sound_loudness']
     
     correlations = {}
     for feature in audio_features:
@@ -56,7 +55,8 @@ def plot_correlations(df, output_dir="correlation_plots"):
     plt.style.use('seaborn')
     
     # Key features to visualize
-    key_features = ['tempo', 'spectral_centroid', 'rms_mean']
+    key_features = ['tempo', 'vocal_tone_quality', 'sound_brightness', 
+                   'musical_note_strength', 'sound_loudness']
     
     # Create scatter plots for key features
     for feature in key_features:
@@ -128,16 +128,16 @@ def main():
     plot_correlations(df)
     
     # Compare AI vs human songs
-    logging.info("Comparing AI vs human correlations...")
-    comparison = compare_ai_human_songs(df)
-    if comparison is not None:
-        print("\nAI vs Human Comparison:")
-        print(comparison)
+    # logging.info("Comparing AI vs human correlations...")
+    # comparison = compare_ai_human_songs(df)
+    # if comparison is not None:
+    #     print("\nAI vs Human Comparison:")
+    #     print(comparison)
     
     # Save results
     correlations.to_csv('correlation_results.csv')
-    if comparison is not None:
-        comparison.to_csv('ai_human_comparison.csv')
+    # if comparison is not None:
+    #     comparison.to_csv('ai_human_comparison.csv')
     
     logging.info("Analysis complete. Results saved to CSV files.")
 
