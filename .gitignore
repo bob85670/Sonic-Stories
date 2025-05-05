@@ -2,3 +2,5 @@ venv/
 .DS_Store
 *.csv
 *.txt
+audio_data/
+mp3_input/
