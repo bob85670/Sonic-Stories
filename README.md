@@ -6,18 +6,21 @@ Sonic-Stories is a data-driven Python project analyzing the relationship between
 
 1. **Collect Data**
    - Place MP3 song files in the `audio_data/` directory.
-   - Lyrics and other metadata are stored in `all_lyrics.csv`.
+   - Place lyrics text files in the `lyics_data/` directory.
 
-2. **Convert Audio Files**
-   - `convert_mp3_to_wav.py`: Converts `.mp3` files in `audio_data/` to standardized `.wav` files in `wav_input/` using FFmpeg.
+2. **Convert lyric Files**
+   - `convert_txt_to_csv.py`: Converts `.txt` files in `lyrics_data/` to one `.csv`
 
-3. **Extract Audio Features**
-   - `audio_analysis_librosa.py`: Loads `.wav` files and uses `librosa` to extract various audio features (tempo, tone quality, brightness, note strength, loudness), outputting results to `audio_features_results.csv`.
-
-4. **Analyze Lyrics**
+3. **Analyze Lyrics**
    - `lyric_analysis_bert.py`: Analyzes song lyrics for sentiment (via BERT), assigns topics, and outputs results to `lyric_analysis_results.csv`.
 
-5. **Correlate and Visualize**
+4. **Convert Audio Files**
+   - `convert_mp3_to_wav.py`: Converts `.mp3` files in `audio_data/` to standardized `.wav` files in `wav_input/` using FFmpeg.
+
+5. **Extract Audio Features**
+   - `audio_analysis_librosa.py`: Loads `.wav` files and uses `librosa` to extract various audio features (tempo, tone quality, brightness, note strength, loudness), outputting results to `audio_features_results.csv`.
+
+6. **Correlate and Visualize**
    - `correlation/correlation.py`: Merges lyric and audio features, computes correlations between sentiment and audio aspects, and visualizes the results.
 
 ## File & Folder Overview
@@ -42,9 +45,11 @@ Sonic-Stories is a data-driven Python project analyzing the relationship between
 
 1. **Python Version**
    - Python 3.11.8 is required (see `.python-version`)
-   - Create and activate virtual environment:
+   - Create and activate the virtual environment (recommended: Python 3.11):
+   
+     **Mac/Linux:**
      ```bash
-     python -m venv venv
+     python3.11 -m venv venv
      source venv/bin/activate
      ```
 
@@ -57,31 +62,37 @@ Sonic-Stories is a data-driven Python project analyzing the relationship between
 
 ## Typical Workflow
 
-1. **Convert MP3s:**
-   ```bash
-   python convert_mp3_to_wav.py
-   ```
+1. **Copy audio_data(.mp3) and lyrics_data(.txt files) folder to this repo.**
 
-2. **Extract Audio Features:**
+2. **Convert Lyrics:**
    ```bash
-   python audio_analysis_librosa.py
+   python convert_txt_to_csv.py
    ```
+   This will produce all_lyrics.csv
 
 3. **Analyze Lyrics:**
    ```bash
    python lyric_analysis_bert.py
    ```
+   This will produce lyric_analysis_results.csv
 
-4. **Correlate & Visualize:**
+4. **Convert MP3s:**
+   ```bash
+   python convert_mp3_to_wav.py
+   ```
+   This will produce create .wav files in mp3_input folder
+
+5. **Extract Audio Features:**
+   ```bash
+   python audio_analysis_librosa.py
+   ```
+   This will produce audio_features_results.csv
+
+6. **Correlate & Visualize:**
    ```bash
    python correlation/correlation.py
    ```
-
-## Data Management
-
-- All working data (audio and lyric results) are output to CSVs for transparency and further use
-- Add or update content in `all_lyrics.csv` and place new MP3s in `audio_data/` as needed
-- For extracting MP3s from YouTube links, you can use: https://y2mate.nu/en-wl1i/
+   See results!
 
 ## Project Vision
 
