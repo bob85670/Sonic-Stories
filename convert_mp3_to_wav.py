@@ -33,6 +33,6 @@ def convert_mp3_to_wav(input_folder, output_folder):
                 print(f"Error converting {filename}: {e.stderr}")
 
 if __name__ == "__main__":
-    input_folder = "mp3_input" 
-    output_folder = "audio_data" 
+    input_folder = "audio_data" 
+    output_folder = "wav_input" 
     convert_mp3_to_wav(input_folder, output_folder)

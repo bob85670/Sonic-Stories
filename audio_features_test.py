@@ -50,5 +50,5 @@ def test_librosa_features(audio_path):
 
 if __name__ == "__main__":
     # Use your specific audio file
-    audio_file = "audio_data/Justin Bieber - Off My Face (Live from Paris).wav"
+    audio_file = "wav_input/Justin Bieber - Off My Face (Live from Paris).wav"
     test_librosa_features(audio_file)

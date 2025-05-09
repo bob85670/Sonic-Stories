@@ -4,7 +4,7 @@ import pandas as pd
 import os
 import warnings
 
-def extract_audio_features(df, audio_folder="audio_data", output_csv="audio_features.csv"):
+def extract_audio_features(df, audio_folder="wav_input", output_csv="audio_features.csv"):
     """
     Extract audio features using Librosa for .wav files corresponding to song titles in df.
     Save flattened features to a CSV file and print summary statistics.
@@ -83,7 +83,7 @@ def main():
     Main function to convert .mp3 to .wav (if needed) and extract audio features.
     """
     # Configuration
-    wav_folder = "audio_data"
+    wav_folder = "wav_input"
     lyric_csv = "lyric_analysis_results.csv"
     output_csv = "audio_features_results.csv"
 

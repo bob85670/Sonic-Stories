@@ -5,11 +5,11 @@ Sonic-Stories is a data-driven Python project analyzing the relationship between
 ## Project Flow
 
 1. **Collect Data**
-   - Place MP3 song files in the `mp3_input/` directory.
+   - Place MP3 song files in the `audio_data/` directory.
    - Lyrics and other metadata are stored in `all_lyrics.csv`.
 
 2. **Convert Audio Files**
-   - `convert_mp3_to_wav.py`: Converts `.mp3` files in `mp3_input/` to standardized `.wav` files in `audio_data/` using FFmpeg.
+   - `convert_mp3_to_wav.py`: Converts `.mp3` files in `audio_data/` to standardized `.wav` files in `wav_input/` using FFmpeg.
 
 3. **Extract Audio Features**
    - `audio_analysis_librosa.py`: Loads `.wav` files and uses `librosa` to extract various audio features (tempo, tone quality, brightness, note strength, loudness), outputting results to `audio_features_results.csv`.
@@ -80,7 +80,7 @@ Sonic-Stories is a data-driven Python project analyzing the relationship between
 ## Data Management
 
 - All working data (audio and lyric results) are output to CSVs for transparency and further use
-- Add or update content in `all_lyrics.csv` and place new MP3s in `mp3_input/` as needed
+- Add or update content in `all_lyrics.csv` and place new MP3s in `audio_data/` as needed
 - For extracting MP3s from YouTube links, you can use: https://y2mate.nu/en-wl1i/
 
 ## Project Vision
