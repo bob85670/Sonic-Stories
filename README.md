@@ -80,7 +80,7 @@ Sonic-Stories is a data-driven Python project analyzing the relationship between
    ```bash
    python convert_mp3_to_wav.py
    ```
-   This will produce create .wav files in mp3_input folder
+   This will produce create .wav files in wav_input folder
 
 5. **Extract Audio Features:**
    ```bash
