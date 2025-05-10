@@ -19,7 +19,7 @@ def choose_sentiment_column(df):
         logging.info("Mixed sentiment labels. Using sentiment_numeric for correlation.")
         return 'sentiment_numeric'
 
-def load_data(lyric_file="../lyric_analysis_results.csv", audio_file="../audio_features_results.csv"):
+def load_data(lyric_file="lyric_analysis_results.csv", audio_file="audio_features_results.csv"):
     """Load and merge lyric and audio analysis results."""
     try:
         lyric_df = pd.read_csv(lyric_file)

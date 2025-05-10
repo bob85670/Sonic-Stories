@@ -27,10 +27,17 @@ def extract_audio_features(df, audio_folder="wav_input", output_csv="audio_featu
     }
 
     processed_count = 0
+    def find_wav_file(root_folder, title):
+        for root, _, files in os.walk(root_folder):
+            for filename in files:
+                if filename == f"{title}.wav":
+                    return os.path.join(root, filename)
+        return None
+
     for title in df["title"]:
-        audio_path = os.path.join(audio_folder, f"{title}.wav")
-        if not os.path.exists(audio_path):
-            print(f"Warning: Audio file not found for {title} at {audio_path}")
+        audio_path = find_wav_file(audio_folder, title)
+        if audio_path is None or not os.path.exists(audio_path):
+            print(f"Warning: Audio file not found for {title} in {audio_folder}")
             continue
 
         try:
